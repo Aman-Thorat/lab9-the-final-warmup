@@ -7,7 +7,7 @@ export class TodoItem extends LitElement {
   static properties = {
     todo: { type: Object },
     isEditing: { state: true },
-    editValue: { state: true }
+    editValue: { state: true },
   };
 
   static styles = css`
@@ -23,7 +23,9 @@ export class TodoItem extends LitElement {
       background: white;
       border-radius: 8px;
       margin-bottom: 8px;
-      transition: transform 0.2s, box-shadow 0.2s;
+      transition:
+        transform 0.2s,
+        box-shadow 0.2s;
     }
 
     .todo-item:hover {
@@ -73,7 +75,7 @@ export class TodoItem extends LitElement {
     }
 
     .edit-btn {
-      background: #4CAF50;
+      background: #4caf50;
       color: white;
     }
 
@@ -91,7 +93,7 @@ export class TodoItem extends LitElement {
     }
 
     .save-btn {
-      background: #2196F3;
+      background: #2196f3;
       color: white;
     }
 
@@ -116,20 +118,24 @@ export class TodoItem extends LitElement {
   }
 
   handleToggle() {
-    this.dispatchEvent(new CustomEvent('toggle-todo', {
-      detail: { id: this.todo.id },
-      bubbles: true,
-      composed: true
-    }));
+    this.dispatchEvent(
+      new CustomEvent('toggle-todo', {
+        detail: { id: this.todo.id },
+        bubbles: true,
+        composed: true,
+      })
+    );
   }
 
   handleDelete() {
     if (confirm('Delete this todo?')) {
-      this.dispatchEvent(new CustomEvent('delete-todo', {
-        detail: { id: this.todo.id },
-        bubbles: true,
-        composed: true
-      }));
+      this.dispatchEvent(
+        new CustomEvent('delete-todo', {
+          detail: { id: this.todo.id },
+          bubbles: true,
+          composed: true,
+        })
+      );
     }
   }
 
@@ -140,11 +146,13 @@ export class TodoItem extends LitElement {
 
   handleSave() {
     if (this.editValue.trim()) {
-      this.dispatchEvent(new CustomEvent('update-todo', {
-        detail: { id: this.todo.id, text: this.editValue },
-        bubbles: true,
-        composed: true
-      }));
+      this.dispatchEvent(
+        new CustomEvent('update-todo', {
+          detail: { id: this.todo.id, text: this.editValue },
+          bubbles: true,
+          composed: true,
+        })
+      );
       this.isEditing = false;
     }
   }
@@ -170,13 +178,15 @@ export class TodoItem extends LitElement {
             class="edit-input"
             type="text"
             .value=${this.editValue}
-            @input=${(e) => this.editValue = e.target.value}
+            @input=${e => (this.editValue = e.target.value)}
             @keydown=${this.handleKeyDown}
             autofocus
           />
           <div class="button-group">
             <button class="save-btn" @click=${this.handleSave}>Save</button>
-            <button class="cancel-btn" @click=${this.handleCancel}>Cancel</button>
+            <button class="cancel-btn" @click=${this.handleCancel}>
+              Cancel
+            </button>
           </div>
         </div>
       `;
@@ -199,13 +209,15 @@ export class TodoItem extends LitElement {
             class="edit-btn"
             @click=${this.handleEdit}
             ?disabled=${this.todo.completed}
-            aria-label="Edit todo">
+            aria-label="Edit todo"
+          >
             Edit
           </button>
           <button
             class="delete-btn"
             @click=${this.handleDelete}
-            aria-label="Delete todo">
+            aria-label="Delete todo"
+          >
             Delete
           </button>
         </div>

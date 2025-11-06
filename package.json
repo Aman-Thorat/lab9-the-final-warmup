@@ -9,7 +9,9 @@
     "preview": "vite preview",
     "test": "node --test tests/**/*.test.js",
     "lint": "eslint src",
-    "lint:fix": "eslint src --fix"
+    "lint:fix": "eslint src --fix",
+    "format": "prettier --write \"src/**/*.{js,css,html}\"",
+    "format:check": "prettier --check \"src/**/*.{js,css,html}\""
   },
   "keywords": [
     "lit",
@@ -23,7 +25,8 @@
     "lit": "^3.1.0"
   },
   "devDependencies": {
-    "vite": "^5.0.0",
-    "eslint": "^8.55.0"
+    "eslint": "^8.55.0",
+    "prettier": "^3.6.2",
+    "vite": "^5.0.0"
   }
 }

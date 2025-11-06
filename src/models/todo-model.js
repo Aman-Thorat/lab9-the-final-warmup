@@ -36,7 +36,7 @@ export class TodoModel {
       id: this.nextId++,
       text: text.trim(),
       completed: false,
-      createdAt: new Date().toISOString()
+      createdAt: new Date().toISOString(),
     };
 
     this.todos.push(todo);

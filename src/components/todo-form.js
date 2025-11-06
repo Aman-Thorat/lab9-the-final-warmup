@@ -5,7 +5,7 @@ import { LitElement, html, css } from 'lit';
  */
 export class TodoForm extends LitElement {
   static properties = {
-    inputValue: { state: true }
+    inputValue: { state: true },
   };
 
   static styles = css`
@@ -69,11 +69,13 @@ export class TodoForm extends LitElement {
     const text = this.inputValue.trim();
 
     if (text) {
-      this.dispatchEvent(new CustomEvent('add-todo', {
-        detail: { text },
-        bubbles: true,
-        composed: true
-      }));
+      this.dispatchEvent(
+        new CustomEvent('add-todo', {
+          detail: { text },
+          bubbles: true,
+          composed: true,
+        })
+      );
 
       this.inputValue = '';
     }
@@ -94,9 +96,7 @@ export class TodoForm extends LitElement {
           aria-label="New todo"
           autofocus
         />
-        <button type="submit" ?disabled=${!this.inputValue.trim()}>
-          Add
-        </button>
+        <button type="submit" ?disabled=${!this.inputValue.trim()}>Add</button>
       </form>
     `;
   }

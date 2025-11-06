@@ -6,7 +6,7 @@ import './todo-item.js';
  */
 export class TodoList extends LitElement {
   static properties = {
-    todos: { type: Array }
+    todos: { type: Array },
   };
 
   static styles = css`
@@ -68,9 +68,7 @@ export class TodoList extends LitElement {
 
     return html`
       <div class="list-container">
-        ${this.todos.map(todo => html`
-          <todo-item .todo=${todo}></todo-item>
-        `)}
+        ${this.todos.map(todo => html` <todo-item .todo=${todo}></todo-item> `)}
       </div>
     `;
   }

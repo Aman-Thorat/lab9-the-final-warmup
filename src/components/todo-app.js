@@ -10,7 +10,7 @@ import './todo-list.js';
  */
 export class TodoApp extends LitElement {
   static properties = {
-    todos: { state: true }
+    todos: { state: true },
   };
 
   static styles = css`
@@ -179,35 +179,34 @@ export class TodoApp extends LitElement {
           </div>
         </div>
 
-        <todo-form
-          @add-todo=${this.handleAddTodo}>
-        </todo-form>
+        <todo-form @add-todo=${this.handleAddTodo}> </todo-form>
 
         <todo-list
           .todos=${this.todos}
           @toggle-todo=${this.handleToggleTodo}
           @delete-todo=${this.handleDeleteTodo}
-          @update-todo=${this.handleUpdateTodo}>
+          @update-todo=${this.handleUpdateTodo}
+        >
         </todo-list>
 
         <div class="actions">
           <button
             class="clear-completed"
             @click=${this.handleClearCompleted}
-            ?disabled=${this.model.completedCount === 0}>
+            ?disabled=${this.model.completedCount === 0}
+          >
             Clear Completed
           </button>
           <button
             class="clear-all"
             @click=${this.handleClearAll}
-            ?disabled=${this.todos.length === 0}>
+            ?disabled=${this.todos.length === 0}
+          >
             Clear All
           </button>
         </div>
 
-        <div class="footer">
-          Lab 9: The final battle!
-        </div>
+        <div class="footer">Lab 9: The final battle!</div>
       </div>
     `;
   }
