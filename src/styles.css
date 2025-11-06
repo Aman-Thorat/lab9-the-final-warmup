@@ -1,37 +1,69 @@
-/* no CSS variables!?! */
+/* src/styles.css */
 
+/* 1. Define base variables for light mode (default) */
+:root {
+    --app-bg-color: #f0f2f5;
+    --app-card-bg-color: #ffffff;
+    --app-text-color-primary: #333333;
+    --app-text-color-secondary: #666666;
+    --app-text-color-faint: #999999;
+    --app-border-color: #e0e0e0;
+    --app-accent-color: #667eea;
+    --app-accent-color-hover: #5568d3;
+    --app-shadow-color: rgba(0, 0, 0, 0.2);
+}
+
+/* 2. Define variables for dark mode */
+[data-theme='dark'] {
+    --app-bg-color: #121212;
+    --app-card-bg-color: #1e1e1e;
+    --app-text-color-primary: #e0e0e0;
+    --app-text-color-secondary: #aaaaaa;
+    --app-text-color-faint: #777777;
+    --app-border-color: #333333;
+    --app-accent-color: #768fff;
+    --app-accent-color-hover: #8a9fff;
+    --app-shadow-color: rgba(0, 0, 0, 0.5);
+}
+
+/* 3. Apply base styles from your old file, but using CSS variables */
 * {
-  box-sizing: border-box;
-  margin: 0;
-  padding: 0;
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
 }
 
 body {
-  font-family:
-    -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu,
-    Cantarell, sans-serif;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  min-height: 100vh;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  padding: 20px;
+    font-family:
+            -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu,
+            Cantarell, sans-serif;
+    margin: 0;
+    padding: 20px;
+    background-color: var(--app-bg-color); /* CHANGED: Was a gradient */
+    color: var(--app-text-color-primary); /* CHANGED: Uses variable */
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    transition:
+            background-color 0.3s ease,
+            color 0.3s ease;
 }
 
 main {
-  width: 100%;
-  max-width: 600px;
+    width: 100%;
+    max-width: 600px;
 }
 
 /* Utility classes */
 .visually-hidden {
-  position: absolute;
-  width: 1px;
-  height: 1px;
-  padding: 0;
-  margin: -1px;
-  overflow: hidden;
-  clip: rect(0, 0, 0, 0);
-  white-space: nowrap;
-  border-width: 0;
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border-width: 0;
 }

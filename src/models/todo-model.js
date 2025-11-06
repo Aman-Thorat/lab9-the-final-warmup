@@ -52,7 +52,7 @@ export class TodoModel {
    *
    * @example
    * model.subscribe(() => {
-   *   console.log('Todos changed:', model.todos);
+   * console.log('Todos changed:', model.todos);
    * });
    */
   subscribe(listener) {
@@ -178,6 +178,39 @@ export class TodoModel {
    */
   clearAll() {
     this.todos = [];
+    this.save();
+    this.notify();
+  }
+
+  /**
+   * [NEW] Overwrites all tasks with an imported set.
+   * Recalculates the next ID to prevent collisions.
+   *
+   * @param {Array<Todo>} importedTodos - An array of todo objects
+   * @returns {void}
+   * @fires TodoModel#notify
+   *
+   * @example
+   * model.importTasks([
+   * { id: 10, text: 'Imported task', completed: false, createdAt: '...' }
+   * ]);
+   */
+  importTasks(importedTodos) {
+    if (!Array.isArray(importedTodos)) {
+      console.error('Import failed: Data is not an array.');
+      return;
+    }
+
+    // Basic validation
+    const validTodos = importedTodos.filter(
+      t => t.id && t.text && t.hasOwnProperty('completed')
+    );
+
+    this.todos = validTodos;
+    // Recalculate nextId to avoid collisions
+    const maxId = Math.max(0, ...this.todos.map(t => t.id));
+    this.nextId = maxId + 1;
+
     this.save();
     this.notify();
   }
