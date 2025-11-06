@@ -2,11 +2,27 @@ import { LitElement, html, css } from 'lit';
 import './todo-item.js';
 
 /**
- * TodoList - Displays a list of todos
+ * @class TodoList
+ * @extends LitElement
+ * @description List component that displays all todo items.
+ * Renders todo-item components and passes through events.
+ *
+ * @property {Array<Todo>} todos - Array of todo items to display
+ *
+ * @fires toggle-todo - Passed through from todo-item
+ * @fires delete-todo - Passed through from todo-item
+ * @fires update-todo - Passed through from todo-item
+ *
+ * @example
+ * <todo-list
+ *   .todos="${this.todos}"
+ *   @toggle-todo="${this.handleToggle}">
+ * </todo-list>
  */
 export class TodoList extends LitElement {
   static properties = {
-    todos: { type: Array },
+    /** @type {Array<Todo>} Array of todo items */
+    todos: { type: Array }
   };
 
   static styles = css`
@@ -17,59 +33,45 @@ export class TodoList extends LitElement {
     .empty-state {
       text-align: center;
       padding: 40px 20px;
-      color: white;
+      color: #999;
+    }
+
+    .empty-state p {
+      margin: 0;
       font-size: 18px;
-    }
-
-    .empty-icon {
-      font-size: 48px;
-      margin-bottom: 16px;
-    }
-
-    .list-container {
-      max-height: 500px;
-      overflow-y: auto;
-    }
-
-    /* Custom scrollbar */
-    .list-container::-webkit-scrollbar {
-      width: 8px;
-    }
-
-    .list-container::-webkit-scrollbar-track {
-      background: rgba(255, 255, 255, 0.1);
-      border-radius: 4px;
-    }
-
-    .list-container::-webkit-scrollbar-thumb {
-      background: rgba(255, 255, 255, 0.3);
-      border-radius: 4px;
-    }
-
-    .list-container::-webkit-scrollbar-thumb:hover {
-      background: rgba(255, 255, 255, 0.5);
     }
   `;
 
+  /**
+   * Creates a new TodoList instance.
+   *
+   * @constructor
+   */
   constructor() {
     super();
     this.todos = [];
   }
 
+  /**
+   * Render the component.
+   *
+   * @returns {TemplateResult}
+   */
   render() {
     if (this.todos.length === 0) {
       return html`
         <div class="empty-state">
-          <div class="empty-icon">📝</div>
-          <p>No todos yet. Add one above!</p>
+          <p>No tasks yet. Add one above to get started!</p>
         </div>
       `;
     }
 
     return html`
-      <div class="list-container">
-        ${this.todos.map(todo => html` <todo-item .todo=${todo}></todo-item> `)}
-      </div>
+      ${this.todos.map(
+      todo => html`
+          <todo-item .todo=${todo}></todo-item>
+        `
+    )}
     `;
   }
 }

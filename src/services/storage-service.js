@@ -1,64 +1,271 @@
+import { LitElement, html, css } from 'lit';
+import { TodoModel } from '../models/todo-model.js';
+import { StorageService } from '../services/storage-service.js';
+import './todo-form.js';
+import './todo-list.js';
+
 /**
- * StorageService - Handles localStorage operations for the TODO app
+ * @class TodoApp
+ * @extends LitElement
+ * @description Main application component that coordinates between Model and View components.
+ * Manages the overall state and communication between todo-form and todo-list.
+ *
+ * @fires add-todo - When a new todo is added
+ * @fires toggle-todo - When a todo completion status is toggled
+ * @fires delete-todo - When a todo is deleted
+ * @fires update-todo - When a todo is updated
+ *
+ * @example
+ * <todo-app></todo-app>
  */
-export class StorageService {
-  constructor(storageKey = 'todos') {
-    this.storageKey = storageKey;
+export class TodoApp extends LitElement {
+  static properties = {
+    /** @type {Array<Todo>} Array of todos */
+    todos: { state: true }
+  };
+
+  static styles = css`
+    :host {
+      display: block;
+    }
+
+    .app-container {
+      background: white;
+      border-radius: 16px;
+      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+      padding: 32px;
+      min-height: 400px;
+    }
+
+    h1 {
+      margin: 0 0 8px 0;
+      color: #333;
+      font-size: 32px;
+      font-weight: 700;
+    }
+
+    .subtitle {
+      color: #666;
+      margin-bottom: 24px;
+      font-size: 14px;
+    }
+
+    .stats {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 16px;
+      background: #f5f5f5;
+      border-radius: 8px;
+      margin-bottom: 20px;
+    }
+
+    .stat-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .stat-value {
+      font-size: 24px;
+      font-weight: 700;
+      color: #667eea;
+    }
+
+    .stat-label {
+      font-size: 12px;
+      color: #666;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .actions {
+      display: flex;
+      gap: 8px;
+      margin-top: 20px;
+    }
+
+    button {
+      flex: 1;
+      padding: 10px 16px;
+      border: none;
+      border-radius: 8px;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .clear-completed {
+      background: #ff9800;
+      color: white;
+    }
+
+    .clear-completed:hover {
+      background: #f57c00;
+    }
+
+    .clear-all {
+      background: #f44336;
+      color: white;
+    }
+
+    .clear-all:hover {
+      background: #da190b;
+    }
+
+    button:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+
+    .footer {
+      margin-top: 20px;
+      padding-top: 20px;
+      border-top: 1px solid #e0e0e0;
+      text-align: center;
+      color: #666;
+      font-size: 12px;
+    }
+  `;
+
+  /**
+   * Creates a new TodoApp instance.
+   *
+   * @constructor
+   */
+  constructor() {
+    super();
+    this.storageService = new StorageService();
+    this.model = new TodoModel(this.storageService);
+    this.todos = this.model.todos;
+
+    // Subscribe to model changes
+    this.model.subscribe(() => {
+      this.todos = [...this.model.todos];
+    });
   }
 
   /**
-   * Save data to localStorage
+   * Handle add todo event.
+   *
+   * @param {CustomEvent} e - Event with detail.text
+   * @returns {void}
    */
-  save(k, d) {
-    try {
-      const fk = `${this.storageKey}_${k}`;
-      localStorage.setItem(fk, JSON.stringify(d));
-    } catch (error) {
-      console.error('Failed to save to localStorage:', error);
+  handleAddTodo(e) {
+    this.model.addTodo(e.detail.text);
+  }
+
+  /**
+   * Handle toggle todo event.
+   *
+   * @param {CustomEvent} e - Event with detail.id
+   * @returns {void}
+   */
+  handleToggleTodo(e) {
+    this.model.toggleComplete(e.detail.id);
+  }
+
+  /**
+   * Handle delete todo event.
+   *
+   * @param {CustomEvent} e - Event with detail.id
+   * @returns {void}
+   */
+  handleDeleteTodo(e) {
+    this.model.deleteTodo(e.detail.id);
+  }
+
+  /**
+   * Handle update todo event.
+   *
+   * @param {CustomEvent} e - Event with detail.id and detail.text
+   * @returns {void}
+   */
+  handleUpdateTodo(e) {
+    this.model.updateTodo(e.detail.id, e.detail.text);
+  }
+
+  /**
+   * Handle clear completed button click.
+   *
+   * @returns {void}
+   */
+  handleClearCompleted() {
+    if (confirm('Clear all completed todos?')) {
+      this.model.clearCompleted();
     }
   }
 
   /**
-   * Load data from localStorage
+   * Handle clear all button click.
+   *
+   * @returns {void}
    */
-  load(key, defaultValue = null) {
-    try {
-      const fullKey = `${this.storageKey}_${key}`;
-      const item = localStorage.getItem(fullKey);
-      return item ? JSON.parse(item) : defaultValue;
-    } catch (error) {
-      console.error('Failed to load from localStorage:', error);
-      return defaultValue;
+  handleClearAll() {
+    if (confirm('Clear ALL todos? This cannot be undone.')) {
+      this.model.clearAll();
     }
   }
 
   /**
-   * Remove data from localStorage
+   * Render the component.
+   *
+   * @returns {TemplateResult}
    */
-  remove(k) {
-    try {
-      const fullK = `${this.storageKey}_${k}`;
-      localStorage.removeItem(fullK);
-    } catch (e) {
-      console.error('Failed to remove from localStorage:', e);
-    }
-  }
+  render() {
+    return html`
+      <div class="app-container">
+        <h1>My Tasks</h1>
+        <p class="subtitle">Stay organized and productive</p>
 
-  /**
-   * Clear all data for this app
-   */
-  clear() {
-    try {
-      const keysToRemove = [];
-      for (let i = 0; i < localStorage.length; i++) {
-        const key = localStorage.key(i);
-        if (key && key.startsWith(this.storageKey)) {
-          keysToRemove.push(key);
-        }
-      }
-      keysToRemove.forEach(key => localStorage.removeItem(key));
-    } catch (error) {
-      console.error('Failed to clear localStorage:', error);
-    }
+        <div class="stats">
+          <div class="stat-item">
+            <div class="stat-value">${this.todos.length}</div>
+            <div class="stat-label">Total</div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-value">${this.model.activeCount}</div>
+            <div class="stat-label">Active</div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-value">${this.model.completedCount}</div>
+            <div class="stat-label">Completed</div>
+          </div>
+        </div>
+
+        <todo-form
+          @add-todo=${this.handleAddTodo}>
+        </todo-form>
+
+        <todo-list
+          .todos=${this.todos}
+          @toggle-todo=${this.handleToggleTodo}
+          @delete-todo=${this.handleDeleteTodo}
+          @update-todo=${this.handleUpdateTodo}>
+        </todo-list>
+
+        <div class="actions">
+          <button
+            class="clear-completed"
+            @click=${this.handleClearCompleted}
+            ?disabled=${this.model.completedCount === 0}>
+            Clear Completed
+          </button>
+          <button
+            class="clear-all"
+            @click=${this.handleClearAll}
+            ?disabled=${this.todos.length === 0}>
+            Clear All
+          </button>
+        </div>
+
+        <div class="footer">
+          Lab 9: The final battle!
+        </div>
+      </div>
+    `;
   }
 }
+
+customElements.define('todo-app', TodoApp);

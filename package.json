@@ -13,6 +13,8 @@
     "test:e2e:ui": "playwright test --ui",
     "test:e2e:headed": "playwright test --headed",
     "test:e2e:report": "playwright show-report",
+    "docs": "jsdoc -c jsdoc.config.json",
+    "docs:serve": "npm run docs && npx http-server docs/jsdoc -p 8081 -o",
     "lint": "eslint src",
     "lint:fix": "eslint src --fix",
     "format": "prettier --write \"src/**/*.{js,css,html}\"",
@@ -32,6 +34,7 @@
   "devDependencies": {
     "@playwright/test": "^1.56.1",
     "eslint": "^8.55.0",
+    "jsdoc": "^4.0.5",
     "prettier": "^3.6.2",
     "vite": "^5.0.0"
   }

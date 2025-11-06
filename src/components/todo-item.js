@@ -1,12 +1,33 @@
 import { LitElement, html, css } from 'lit';
 
 /**
- * TodoItem - Individual todo item component
+ * @class TodoItem
+ * @extends LitElement
+ * @description Individual todo item component with edit, delete, and toggle functionality.
+ * Supports inline editing with save/cancel actions.
+ *
+ * @property {Todo} todo - The todo object to display
+ * @property {boolean} isEditing - Whether the item is in edit mode
+ * @property {string} editValue - The current edit input value
+ *
+ * @fires toggle-todo - When checkbox is clicked
+ * @fires delete-todo - When delete button is clicked
+ * @fires update-todo - When save button is clicked in edit mode
+ *
+ * @example
+ * <todo-item
+ *   .todo="${todo}"
+ *   @toggle-todo="${this.handleToggle}"
+ *   @delete-todo="${this.handleDelete}">
+ * </todo-item>
  */
 export class TodoItem extends LitElement {
   static properties = {
+    /** @type {Todo} The todo object */
     todo: { type: Object },
+    /** @type {boolean} Whether in edit mode */
     isEditing: { state: true },
+    /** @type {string} Current edit value */
     editValue: { state: true },
   };
 
@@ -111,12 +132,23 @@ export class TodoItem extends LitElement {
     }
   `;
 
+  /**
+   * Creates a new TodoItem instance.
+   *
+   * @constructor
+   */
   constructor() {
     super();
     this.isEditing = false;
     this.editValue = '';
   }
 
+  /**
+   * Handle checkbox toggle.
+   *
+   * @returns {void}
+   * @fires toggle-todo
+   */
   handleToggle() {
     this.dispatchEvent(
       new CustomEvent('toggle-todo', {
@@ -127,6 +159,12 @@ export class TodoItem extends LitElement {
     );
   }
 
+  /**
+   * Handle delete button click.
+   *
+   * @returns {void}
+   * @fires delete-todo
+   */
   handleDelete() {
     if (confirm('Delete this todo?')) {
       this.dispatchEvent(
@@ -139,11 +177,22 @@ export class TodoItem extends LitElement {
     }
   }
 
+  /**
+   * Handle edit button click.
+   *
+   * @returns {void}
+   */
   handleEdit() {
     this.isEditing = true;
     this.editValue = this.todo.text;
   }
 
+  /**
+   * Handle save button click.
+   *
+   * @returns {void}
+   * @fires update-todo
+   */
   handleSave() {
     if (this.editValue.trim()) {
       this.dispatchEvent(
@@ -157,11 +206,22 @@ export class TodoItem extends LitElement {
     }
   }
 
+  /**
+   * Handle cancel button click.
+   *
+   * @returns {void}
+   */
   handleCancel() {
     this.isEditing = false;
     this.editValue = '';
   }
 
+  /**
+   * Handle keydown events in edit mode.
+   *
+   * @param {KeyboardEvent} e - Keyboard event
+   * @returns {void}
+   */
   handleKeyDown(e) {
     if (e.key === 'Enter') {
       this.handleSave();
@@ -170,6 +230,11 @@ export class TodoItem extends LitElement {
     }
   }
 
+  /**
+   * Render the component.
+   *
+   * @returns {TemplateResult}
+   */
   render() {
     if (this.isEditing) {
       return html`

@@ -1,22 +1,31 @@
 import { LitElement, html, css } from 'lit';
 
 /**
- * TodoForm - Input form for adding new todos
+ * @class TodoForm
+ * @extends LitElement
+ * @description Form component for adding new todos.
+ * Handles input validation and emits events when todos are submitted.
+ *
+ * @fires add-todo - Emitted when a valid todo is submitted with detail.text
+ *
+ * @example
+ * <todo-form @add-todo="${this.handleAddTodo}"></todo-form>
  */
 export class TodoForm extends LitElement {
   static properties = {
-    inputValue: { state: true },
+    /** @type {string} Current input value */
+    inputValue: { state: true }
   };
 
   static styles = css`
     :host {
       display: block;
-      margin-bottom: 20px;
     }
 
     form {
       display: flex;
       gap: 8px;
+      margin-bottom: 20px;
     }
 
     input {
@@ -26,7 +35,7 @@ export class TodoForm extends LitElement {
       border: 2px solid #e0e0e0;
       border-radius: 8px;
       outline: none;
-      transition: border-color 0.3s;
+      transition: border-color 0.2s;
     }
 
     input:focus {
@@ -42,7 +51,7 @@ export class TodoForm extends LitElement {
       font-size: 16px;
       font-weight: 600;
       cursor: pointer;
-      transition: background 0.3s;
+      transition: background 0.2s;
     }
 
     button:hover {
@@ -50,53 +59,56 @@ export class TodoForm extends LitElement {
     }
 
     button:active {
-      transform: translateY(1px);
-    }
-
-    button:disabled {
-      background: #ccc;
-      cursor: not-allowed;
+      transform: scale(0.98);
     }
   `;
 
+  /**
+   * Creates a new TodoForm instance.
+   *
+   * @constructor
+   */
   constructor() {
     super();
     this.inputValue = '';
   }
 
+  /**
+   * Handle form submission.
+   *
+   * @param {Event} e - Submit event
+   * @returns {void}
+   */
   handleSubmit(e) {
     e.preventDefault();
-    const text = this.inputValue.trim();
-
-    if (text) {
+    if (this.inputValue.trim()) {
       this.dispatchEvent(
         new CustomEvent('add-todo', {
-          detail: { text },
+          detail: { text: this.inputValue },
           bubbles: true,
-          composed: true,
+          composed: true
         })
       );
-
       this.inputValue = '';
     }
   }
 
-  handleInput(e) {
-    this.inputValue = e.target.value;
-  }
-
+  /**
+   * Render the component.
+   *
+   * @returns {TemplateResult}
+   */
   render() {
     return html`
       <form @submit=${this.handleSubmit}>
         <input
           type="text"
-          placeholder="What needs to be done?"
           .value=${this.inputValue}
-          @input=${this.handleInput}
+          @input=${e => this.inputValue = e.target.value}
+          placeholder="What needs to be done?"
           aria-label="New todo"
-          autofocus
         />
-        <button type="submit" ?disabled=${!this.inputValue.trim()}>Add</button>
+        <button type="submit">Add</button>
       </form>
     `;
   }
